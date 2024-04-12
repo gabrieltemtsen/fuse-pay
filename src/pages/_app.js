@@ -1,5 +1,13 @@
-import "@/styles/globals.css";
+import { App } from 'konsta/react';
+import '@/styles/globals.css';
 
-export default function App({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+function MyApp({ Component, pageProps }) {
+  return (
+    // Wrap our app with App component
+    <App theme="ios">
+      <Component {...pageProps} />
+    </App>
+  );
 }
+
+export default MyApp;
