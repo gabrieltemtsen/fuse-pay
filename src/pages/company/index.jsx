@@ -23,8 +23,8 @@ const index = () => {
 
       <Navbar title="Company"/>
 
-      <div className='h-full'>
-        <BlockTitle>Companies (employee) </BlockTitle>
+      <div className=''>
+        <BlockTitle>Your Companies  </BlockTitle>
       <List strongIos outlineIos>
         <ListItem media={<img
               className="ios:rounded-lg material:rounded-full ios:w-20 material:w-10"
@@ -40,7 +40,7 @@ const index = () => {
             />} link title="John Doe"  />
       </List>
 
-      <BlockTitle>Owned Companies</BlockTitle>
+      <BlockTitle>Your Owned Companies</BlockTitle>
       <List strongIos outlineIos>
         <ListItem
           link
