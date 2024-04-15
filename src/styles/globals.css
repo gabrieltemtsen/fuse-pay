@@ -25,6 +25,13 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+.company-logo {
+ display: flex;
+ flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.5rem;
+}
 
 @layer utilities {
   .text-balance {
