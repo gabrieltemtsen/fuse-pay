@@ -11,9 +11,16 @@ contract FusePay {
     mapping(address => uint256) public employeeSalaries;
     mapping(address => uint256) public employeeWalletBalances;
 
-    struct Loan {
+     enum LoanStatus {
+         Pending,
+          Approved, 
+          Rejected
+           }
+
+   struct Loan {
         uint256 loanAmount;
-        bool approved;
+        string reason;
+        LoanStatus status;
     }
     mapping(address => Loan) public loans;
 
@@ -36,7 +43,7 @@ contract FusePay {
     }
 
     function depositUSDC(uint256 amount) public onlyAdmin payable {
-        IERC20 usdc = IERC20(0x690000EF01deCE82d837B5fAa2719AE47b156697);
+        IERC20 usdc = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);
         
         require(usdc.transferFrom(admin, payable(address(this)), amount), 'Deposit failed');
     }
@@ -88,13 +95,31 @@ contract FusePay {
         employeeWalletBalances[employee] = newBal;
         
     }
-    function requestLoan(uint256 _amount) public {
-        loans[msg.sender]=  Loan(_amount, false);
+   function requestLoan(uint256 _amount, string memory _reason) public {
+    require(loans[msg.sender].loanAmount == 0 || loans[msg.sender].status != LoanStatus.Pending, 'Cannot request a new loan while previous loan is pending');
+    loans[msg.sender] = Loan(_amount, _reason, LoanStatus.Pending);
+}
+    function approveLoan(address _employeeAddress) public onlyAdmin {
+        Loan storage loan = loans[_employeeAddress];
+        require(loan.status == LoanStatus.Pending, 'Loan is not pending approval');
 
+        loan.status = LoanStatus.Approved;
+
+        uint256 amount = loan.loanAmount;
+        address requester = _employeeAddress;
+        address stablecoinAddress = 0x690000EF01deCE82d837B5fAa2719AE47b156697; //CUSD
+        IERC20 stablecoin = IERC20(stablecoinAddress);
+        require(stablecoin.transfer(requester, amount), 'Transfer of funds failed');
     }
-    function approveLoan() public {
-        
+    function rejectLoan(address _employeeAddress) public onlyAdmin {
+        Loan storage loan = loans[_employeeAddress];
+        require(loan.status == LoanStatus.Pending, 'Loan is not pending approval');
+
+        loan.status = LoanStatus.Rejected;
     }
+//     function getLoanRequests() public view returns ( address[] memory) {
+//     return loans;
+// }
 
     receive() external payable {
         // Handle the received Ether here
