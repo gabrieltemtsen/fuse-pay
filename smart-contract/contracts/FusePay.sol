@@ -18,11 +18,12 @@ contract FusePay {
            }
 
    struct Loan {
-        uint256 loanAmount;
-        string reason;
-        LoanStatus status;
-    }
-    mapping(address => Loan) public loans;
+    uint256 loanAmount;
+    string reason;
+    LoanStatus status;
+}
+
+mapping(address => Loan[]) public loans;
 
     constructor(string memory _companyCID, address _admin, uint _companyID) {
         companyCID = _companyCID;
@@ -96,32 +97,57 @@ contract FusePay {
         
     }
    function requestLoan(uint256 _amount, string memory _reason) public {
-    require(loans[msg.sender].loanAmount == 0 || loans[msg.sender].status != LoanStatus.Pending, 'Cannot request a new loan while previous loan is pending');
-    loans[msg.sender] = Loan(_amount, _reason, LoanStatus.Pending);
+    require(loans[msg.sender].length == 0 || loans[msg.sender][loans[msg.sender].length - 1].status != LoanStatus.Pending, "You already have an active loan");    loans[msg.sender].push(Loan(_amount, _reason, LoanStatus.Pending));
 }
     function approveLoan(address _employeeAddress) public onlyAdmin {
-        Loan storage loan = loans[_employeeAddress];
-        require(loan.status == LoanStatus.Pending, 'Loan is not pending approval');
+        require(loans[_employeeAddress].length > 0, "No pending loans for this employee");
+    require(loans[_employeeAddress][loans[_employeeAddress].length - 1].status == LoanStatus.Pending, "No pending loans for this employee");
+    
+    loans[_employeeAddress][loans[_employeeAddress].length - 1].status = LoanStatus.Approved;
 
-        loan.status = LoanStatus.Approved;
-
-        uint256 amount = loan.loanAmount;
-        address requester = _employeeAddress;
+        uint256 loanAmount = loans[_employeeAddress][loans[_employeeAddress].length - 1].loanAmount;
+    address requester = _employeeAddress;
         address stablecoinAddress = 0x690000EF01deCE82d837B5fAa2719AE47b156697; //CUSD
         IERC20 stablecoin = IERC20(stablecoinAddress);
-        require(stablecoin.transfer(requester, amount), 'Transfer of funds failed');
+        require(stablecoin.transfer(requester, loanAmount), 'Transfer of funds failed');
     }
-    function rejectLoan(address _employeeAddress) public onlyAdmin {
-        Loan storage loan = loans[_employeeAddress];
-        require(loan.status == LoanStatus.Pending, 'Loan is not pending approval');
+   function rejectLoan(address _employeeAddress) public onlyAdmin {
+    require(loans[_employeeAddress].length > 0, "No pending loans for this employee");
+    require(loans[_employeeAddress][loans[_employeeAddress].length - 1].status == LoanStatus.Pending, "No pending loans for this employee");
 
-        loan.status = LoanStatus.Rejected;
+    loans[_employeeAddress][loans[_employeeAddress].length - 1].status = LoanStatus.Rejected;
+}
+
+function getAllLoanRequests() public view onlyAdmin returns (address[] memory, uint256[] memory, string[] memory, LoanStatus[] memory) {
+    uint256 totalLoans = 0;
+
+    // Count total loans
+    for (uint256 i = 0; i < employees.length; i++) {
+        totalLoans += loans[employees[i]].length;
     }
-//     function getLoanRequests() public view returns ( address[] memory) {
-//     return loans;
-// }
 
+    address[] memory requesterAddresses = new address[](totalLoans);
+    uint256[] memory loanAmounts = new uint256[](totalLoans);
+    string[] memory reasons = new string[](totalLoans);
+    LoanStatus[] memory statuses = new LoanStatus[](totalLoans);
+
+    uint256 index = 0;
+    for (uint256 i = 0; i < employees.length; i++) {
+        address employee = employees[i];
+        Loan[] storage employeeLoans = loans[employee];
+        
+        for (uint256 j = 0; j < employeeLoans.length; j++) {
+            requesterAddresses[index] = employee;
+            loanAmounts[index] = employeeLoans[j].loanAmount;
+            reasons[index] = employeeLoans[j].reason;
+            statuses[index] = employeeLoans[j].status;
+            index++;
+        }
+    }
+
+    return (requesterAddresses, loanAmounts, reasons, statuses);
+}
     receive() external payable {
-        // Handle the received Ether here
+        // Handle the received Ether 
     }
 }

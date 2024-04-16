@@ -49,24 +49,24 @@ function getAdminCompanies(address _admin) external view returns (address[] memo
     return adminToCompanies[_admin];
 }
 
-function requestLoan(address _companyAddress, uint256 _amount, string memory reason) public {
-        uint256 companyId = companyIDs[_companyAddress];
-        companies[companyId].requestLoan(_amount, reason);
-    }
+// function requestLoan(address _companyAddress, uint256 _amount, string memory reason) public {
+//         uint256 companyId = companyIDs[_companyAddress];
+//         companies[companyId].requestLoan(_amount, reason);
+//     }
 
-    function approveLoan(address _companyAddress, address _employeeAddress) public returns (bool) {
-        uint256 companyId = companyIDs[_companyAddress];
-        require(msg.sender == companies[companyId].getAdmin(), 'No Access');
-        companies[companyId].approveLoan(_employeeAddress);
-        return true;
-    }
+//     function approveLoan(address _companyAddress, address _employeeAddress) public returns (bool) {
+//         uint256 companyId = companyIDs[_companyAddress];
+//         require(msg.sender == companies[companyId].getAdmin(), 'No Access');
+//         companies[companyId].approveLoan(_employeeAddress);
+//         return true;
+//     }
 
-    function rejectLoan(address _companyAddress, address _employeeAddress) public returns (bool) {
-        uint256 companyId = companyIDs[_companyAddress];
-        require(msg.sender == companies[companyId].getAdmin(), 'No Access');
-        companies[companyId].rejectLoan(_employeeAddress);
-        return true;
-    }
+//     function rejectLoan(address _companyAddress, address _employeeAddress) public returns (bool) {
+//         uint256 companyId = companyIDs[_companyAddress];
+//         require(msg.sender == companies[companyId].getAdmin(), 'No Access');
+//         companies[companyId].rejectLoan(_employeeAddress);
+//         return true;
+//     }
 
     // function getLoanRequests(address _companyAddress) public view returns (address[] memory, uint256[] memory, FusePay.LoanStatus[] memory) {
     //     uint256 companyId = companyIDs[_companyAddress];
