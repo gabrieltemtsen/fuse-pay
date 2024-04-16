@@ -90,7 +90,7 @@ mapping(address => Loan[]) public loans;
         require(balance > 0, 'No salary to withdraw');
         require(balance >= _amount, 'Amount exceeds balance');
 
-        IERC20 usdc = IERC20(0x690000EF01deCE82d837B5fAa2719AE47b156697);
+        IERC20 usdc = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);
         require(usdc.transfer(employee, _amount), 'Transfer failed');
         uint256 newBal = employeeWalletBalances[employee] - _amount; 
         employeeWalletBalances[employee] = newBal;
@@ -107,7 +107,7 @@ mapping(address => Loan[]) public loans;
 
         uint256 loanAmount = loans[_employeeAddress][loans[_employeeAddress].length - 1].loanAmount;
     address requester = _employeeAddress;
-        address stablecoinAddress = 0x690000EF01deCE82d837B5fAa2719AE47b156697; //CUSD
+        address stablecoinAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1; //CUSD
         IERC20 stablecoin = IERC20(stablecoinAddress);
         require(stablecoin.transfer(requester, loanAmount), 'Transfer of funds failed');
     }
