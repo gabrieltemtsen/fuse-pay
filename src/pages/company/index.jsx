@@ -29,8 +29,8 @@ import {
 import axios from "axios";
 import { useRouter } from "next/router";
 
-export default function index() {
-  const { address } = useAccount();
+export default function Index() {
+  const { address } = useAccount(); 
   const router = useRouter();
 
   const [userCompanies, setUserCompanies] = useState([]);
