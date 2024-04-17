@@ -1,54 +1,46 @@
-import { App } from 'konsta/react';
-import '@/styles/globals.css';
+import { App } from "konsta/react";
+import "@/styles/globals.css";
 
-import '@rainbow-me/rainbowkit/styles.css';
+import "@rainbow-me/rainbowkit/styles.css";
 
-import {
-  getDefaultConfig,
-  RainbowKitProvider,
-  connectorsForWallets
-} from '@rainbow-me/rainbowkit';
-import { injectedWallet } from "@rainbow-me/rainbowkit/wallets";
-import { http, WagmiProvider, createConfig } from "wagmi";
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { celo, celoAlfajores } from "wagmi/chains";
+import { publicProvider } from "wagmi/providers/public";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const connectors = connectorsForWallets(
-    [
-        {
-            groupName: "Recommended",
-            wallets: [injectedWallet],
-        },
-    ],
-    {
-        appName: "Fuse Pay",
-        projectId: "063d0bf7cbe66b2e8291f29dc850fb19",
-    }
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [
+    celo,
+    celoAlfajores,
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true"
+      ? [celoAlfajores]
+      : []),
+  ],
+  [publicProvider()],
 );
 
-const config = createConfig({
-    connectors,
-    chains: [celo, celoAlfajores],
-    transports: {
-        [celo.id]: http(),
-        [celoAlfajores.id]: http(),
-    },
+const { connectors } = getDefaultWallets({
+  appName: "Fuse Pay",
+  projectId: "063d0bf7cbe66b2e8291f29dc850fb19",
+  chains,
 });
-const queryClient = new QueryClient();
+
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors,
+  publicClient,
+  webSocketPublicClient,
+});
+
 function MyApp({ Component, pageProps }) {
   return (
-    // Wrap our app with App component
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-        <App dark={true} safeAreas={true} theme={"parent" ?  "material" : "ios"}>
-      <Component {...pageProps} />
-    </App>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-    
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains}>
+        <App dark={true} safeAreas={true} theme={"parent" ? "material" : "ios"}>
+          <Component {...pageProps} />
+        </App>
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 }
 
