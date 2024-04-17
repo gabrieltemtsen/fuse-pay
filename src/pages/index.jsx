@@ -8,21 +8,25 @@
           ListItem,
           Link,
           Sheet,  
+          Notification,
           BlockTitle,
+          Toast,
           Chip,
         } from 'konsta/react';
         import { useEffect, useState } from 'react';
         import CeloICON from '/public/celo.png';
 import Image from 'next/image';
 import Layout from './Layout';
+import { useAccount } from "wagmi";
+import {
+  getJSONFromCID,
+  getJSONFromFileinCID,
+  pushImgToStorage,
+  putFileandGetHash,
+  putJSONandGetHash,
+} from "../utils/ipfsGateway";
+import {FUSE_PAY_MANAGER_ABI, FUSE_PAY_MANAGER_ADDRESS} from "../utils/contracts";
 
-        const { ethers } = require("ethers");
-        const { stableTokenABI } = require("@celo/abis");
-
-const STABLE_TOKEN_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a";
-
-const { Contract, utils, providers } = ethers;
-const { formatEther } = utils;
 
      
         
@@ -31,52 +35,63 @@ const { formatEther } = utils;
           const [message, setMessage] = useState("NUll");
           const [sheetOpened, setSheetOpened] = useState(false);
 
-          // Ensure MiniPay provider is available
-          if (typeof window !== 'undefined') {
-            // Your window-dependent code here
-            if (window.ethereum && window.ethereum.isMiniPay) {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-                console.log(signer._address);
-                // alert("MiniPay provider is available");
-            }else{
-              // alert("MiniPay provider is not available");
+          const { address } = useAccount();
+          const [companyName, setCompanyName] = useState("");
+          const [description, setDescription] = useState("");
+          const [companyLogo, setCompanyLogo] = useState(null);
+          
+          const [coverImageUrl, setCoverImageUrl] = useState("");
+          const [inTxn, setInTxn] = useState(false);
+          const [showNotification, setShowNotification] = useState(false);
+          const [showToast, setShowToast] = useState(false);
+          const handleUploadImage = (e) => {
+            setCompanyLogo(e.target.files[0]);
+            setShowToast(true);
+            setCoverImageUrl(URL.createObjectURL(e.target.files[0]));
+          };
+
+
+          const createCompany = async () => {
+            try {
+              if (companyLogo && companyName && description) {
+                setInTxn(true);
+        
+                const productImgCID = await pushImgToStorage(companyLogo);
+                const obj = {
+                  companyName: companyName,
+                  companyLogo: productImgCID,
+                  companyDescription: description,
+                };
+        
+                const companyCID = await putJSONandGetHash(obj);
+            
+                 
+                    const { hash } = await writeContract({
+                      address: FUSE_PAY_MANAGER_ADDRESS,
+                      abi: FUSE_PAY_MANAGER_ABI,
+                      functionName: "createCompany",
+                      args: [companyCID],
+                    });
+            
+                    if (hash) {
+                      setShowToast(true)
+                      setInTxn(false);
+                      closeModal();
+                    } else {
+                      setInTxn(false);
+                      setShowToast(false)
+                    }
+                  
+             
+              } else {
+                setInTxn(false);
+              }
+            } catch (error) {
+              console.log(error);
+              setInTxn(false);
             }
-          }
-          async function checkCUSDBalance(provider, address) {
-            const StableTokenContract = new Contract(
-              STABLE_TOKEN_ADDRESS,
-              stableTokenABI,
-              provider
-            );
-          
-            let balanceInBigNumber = await StableTokenContract.balanceOf(address);
-          
-            let balanceInWei = balanceInBigNumber.toString();
-          
-            let balanceInEthers = formatEther(balanceInWei); // Ether is a unit = 10 ** 18 wei
-          
-            return balanceInEthers;
-          }
-          const provider = new providers.JsonRpcProvider("https://forno.celo.org"); // Mainnet
-
-          const getMiniPayAddress = async() => {
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const address = accounts[0];
-            console.log(address);
-            const signer = provider.getSigner();
-            console.log(signer);
-
-            // let balancer = await checkCUSDBalance(provider, signer._address); // In Ether unit
-
-            // setBalance(balancer);
-
-          }; // In Ether unit
-
-          useEffect(() => {
-            getMiniPayAddress();
-          }
-          , []);
+          };
+        
 
 
           return (
@@ -84,9 +99,33 @@ const { formatEther } = utils;
               <>
               <Layout>
               <Navbar title="Fuse Pay" /><div className='h-full'>
+              <Notification
+        opened={showNotification}
+        // icon={<DemoIcon />}
+        title="Company Created"
+        button
+        onClick={() => setShowNotification(false)}
+        subtitle="successfully created company"
+        text="Click (x) button to close"
+      />
+      <Toast
+          position="center"
+          opened={showToast}
+          button={
+            <Button
+              rounded
+              clear
+              small
+              inline
+              onClick={() => setShowToast(false)}
+            >
+              Close
+            </Button>
+          }
+        ></Toast>
               <section class="bg-white dark:bg-gradient-to-b from-blue-700/[4.79] via-gray-800 h-full">
                 <div class="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-12">
-                  <a href="#" class="inline-flex items-center justify-between px-1 py-1 pr-4 text-sm text-gray-700 bg-gray-100 rounded-full mb-7 dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" role="alert">
+                  <a href="https://celo.org" target='_blank' class="inline-flex items-center justify-between px-1 py-1 pr-4 text-sm text-gray-700 bg-gray-100 rounded-full mb-7 dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" role="alert">
                     <Chip
                       media={<img
                         alt="celo"
@@ -222,22 +261,26 @@ const { formatEther } = utils;
                       </button>
                     </div>
                     <div class="p-4 md:p-5">
-                      <form class="space-y-4" action="#">
+                      <form class="space-y-4" >
                         <div>
                           <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company Name</label>
-                          <input type="text" name="text" id="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Fuse Pay" required />
+                          <input  onChange={(e) => {
+                                setCompanyName(e.target.value);
+                              }} type="text" name="text" id="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Fuse Pay" required />
                         </div>
 
                         <div>
                           <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                          <input type="text" name="text" id="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="About Fuse Pay" required />
+                          <input onChange={(e) => {
+                                setDescription(e.target.value);
+                              }} type="text" name="text" id="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="About Fuse Pay" required />
                         </div>
                         <div>
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="default_size">Company Logo</label>
-                          <input class="block w-full mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="default_size" type="file" />
+                          <input onChange={handleUploadImage} class="block w-full mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="default_size" type="file" />
                         </div>
 
-                        <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create</button>
+                        <button onClick={createCompany} class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create</button>
 
                       </form>
                     </div>

@@ -16,9 +16,45 @@ import { FaHandHoldingUsd,FaBriefcase } from "react-icons/fa";
 import { GiFarmer } from "react-icons/gi";
 import { IoIosHome } from "react-icons/io";
 
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useConnect } from "wagmi";
+import { injected } from "wagmi/connectors";
+import { useAccount } from 'wagmi'
+
 const Layout = ({ children }) => {
+    const [hideConnectBtn, setHideConnectBtn] = useState(false);
+    const { connect } = useConnect();
+    const account = useAccount();
+
+
+    useEffect(() => {
+        if (window.ethereum && window.ethereum.isMiniPay) {
+            setHideConnectBtn(true);
+            connect({ connector: injected({ target: "metaMask" }) });
+        }
+    }, []);
+
     return (
         <Page>
+
+<div className=" flex items-center pr-2">
+                                {!hideConnectBtn && (
+                                    <div className='w-full  conn mt-1 p-1'>
+                                        <ConnectButton
+                                        showBalance={{
+                                            smallScreen: true,
+                                            largeScreen: false,
+                                        }}
+                                    />
+
+                                    </div>
+                                )}
+                            </div>
+
+
+
 
             <div className='normalHeight'>
             {children}
@@ -45,7 +81,7 @@ const Layout = ({ children }) => {
            <span className="mt-1 text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">Company</span>
         </Link>
 
-        <Link href="/profile" type="button" className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
+        <Link href="/loan" type="button" className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group">
         <FaHandHoldingUsd />
             <span className="mt-1 text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">Loans</span>
         </Link>

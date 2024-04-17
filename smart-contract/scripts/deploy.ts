@@ -7,7 +7,7 @@ dotenv.config();
 async function main() {
     console.log("Deploying FusePayManager Contract...");
   
-  // here we deploy the contract    0x20089B148825512b814B9452A9b0389Ee6b9FBBe
+  // here we deploy the contract    0xBec8bD44efA8f0a837F5f8395258b6Ed4e59aBF4
  const FusePayManagerContract = await hre.ethers.deployContract("FusePayManager", );
 
   await FusePayManagerContract.waitForDeployment();
@@ -17,7 +17,7 @@ async function main() {
 
 //   console.log("Sleeping.....");
   // Wait for etherscan to notice that the contract has been deployed
-  await sleep(30000);
+//   await sleep(30000);
 
   // Verify the contract after deploying
 //   await hre.run("verify:verify", {
@@ -26,9 +26,9 @@ async function main() {
 //   });
 
 }
-function sleep(ms: any) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// function sleep(ms: any) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.

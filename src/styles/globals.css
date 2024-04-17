@@ -32,6 +32,14 @@ body {
   gap: 0.5rem;
   font-weight: 800;
 }
+.conn {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 0.5rem;
+
+}
 .company-stats {
   display: flex;
   flex-direction: row;

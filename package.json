@@ -11,6 +11,8 @@
   "dependencies": {
     "@celo/abis": "^11.0.0",
     "@celo/identity": "^5.1.2",
+    "@rainbow-me/rainbowkit": "^2.0.5",
+    "@tanstack/react-query": "^5.29.2",
     "ethers": "^5.7.2",
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.8.0",
@@ -18,7 +20,10 @@
     "next": "14.2.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-icons": "^5.1.0"
+    "react-icons": "^5.1.0",
+    "viem": "^2.9.19",
+    "wagmi": "^2.5.20",
+    "web3.storage": "^4.5.5"
   },
   "devDependencies": {
     "eslint": "^8",
