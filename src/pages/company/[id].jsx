@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 
 import {
@@ -18,6 +19,7 @@ import {
   BlockTitle,
   Chip,
 } from "konsta/react";
+import { ethers } from "ethers";
 import Layout from "../Layout";
 import { FaWallet } from "react-icons/fa";
 import { FaMoneyCheckDollar, FaPeopleGroup } from "react-icons/fa6";
@@ -29,6 +31,8 @@ import {
   FUSE_PAY_ABI,
   FUSE_PAY_MANAGER_ABI,
   FUSE_PAY_MANAGER_ADDRESS,
+  USDT_CONTRACT_ADDRESS,
+  USDT_ABI,
 } from "../../utils/contracts";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -130,18 +134,18 @@ const ViewCompany = () => {
   };
   const getGroupInfo = async () => {
     try {
-      console.log("getting INFO");
+      
+
 
       const companyCID = await readContract({
         address: companyAddress,
-        abi: DEFI_WAGE_ABI,
+        abi: FUSE_PAY_ABI,
         functionName: "companyCID",
         args: [],
       });
-      console.log("companyCID", companyCID);
 
       const bal = await readContract({
-        address: USDT_CONTRACT,
+        address: USDT_CONTRACT_ADDRESS,
         abi: USDT_ABI,
         functionName: "balanceOf",
         args: [companyAddress],
@@ -150,7 +154,7 @@ const ViewCompany = () => {
 
       const companyAdmin = await readContract({
         address: companyAddress,
-        abi: DEFI_WAGE_ABI,
+        abi: FUSE_PAY_ABI,
         functionName: "admin",
         args: [],
       });
@@ -159,21 +163,21 @@ const ViewCompany = () => {
 
       const getEmployees = await readContract({
         address: companyAddress,
-        abi: DEFI_WAGE_ABI,
+        abi: FUSE_PAY_ABI,
         functionName: "getEmployees",
         args: [],
       });
 
       const getEmployeeWalletBalance = await readContract({
         address: companyAddress,
-        abi: DEFI_WAGE_ABI,
+        abi: FUSE_PAY_ABI,
         functionName: "getEmployeeWalletBalance",
         args: [address],
       });
       setWalletBalance(ethers.utils.formatEther(getEmployeeWalletBalance));
       const getEmployeeSalary = await readContract({
         address: companyAddress,
-        abi: DEFI_WAGE_ABI,
+        abi: FUSE_PAY_ABI,
         functionName: "getEmployeeSalary",
         args: [address],
       });
@@ -189,10 +193,11 @@ const ViewCompany = () => {
       const axiosResponse = await axios(config);
 
       const companyData = axiosResponse.data;
-      console.log("HELLOOOOOxxxxxx", companyData);
       setCompanyName(companyData.companyName);
       setCompanyLogo(companyData.companyLogo);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const addEmployee = async () => {
@@ -237,12 +242,11 @@ const ViewCompany = () => {
         <div className="company-logo">
           <img
             class="w-20 h-20 rounded-full"
-            src="https://shorturl.at/jsTXZ"
+            src={`https://gateway.lighthouse.storage/ipfs/${companyLogo}`}
             alt="Large avatar"
           ></img>
 
           <span>
-            {" "}
             {companyName} <br />
             <span> Manage Company funds </span>
           </span>

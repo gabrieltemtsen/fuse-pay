@@ -54,7 +54,7 @@ body {
 }
 .normalHeight {
   max-height: 94%;
-  overflow-y: auto;
+  overflow-y: auto ;
 }
 
 @layer utilities {

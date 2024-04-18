@@ -1,5 +1,6 @@
 import { App } from "konsta/react";
 import "@/styles/globals.css";
+import { useEffect, useState } from "react";
 
 import "@rainbow-me/rainbowkit/styles.css";
 
@@ -32,12 +33,34 @@ const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 
+
 function MyApp({ Component, pageProps }) {
+  const [deviceType, setDeviceType] = useState(null);
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent;
+
+    const isAndroid = userAgent.match(/Android/i);
+    const isIOS = userAgent.match(/iPhone|iPad|iPod/i);
+    const isLaptop = !isAndroid && !isIOS;
+
+    if (isAndroid) {
+      setDeviceType('android');
+    } else if (isIOS) {
+      setDeviceType('ios');
+    } else {
+      setDeviceType('laptop');
+    }
+  }, []);
+  const theme = deviceType === 'ios' ? 'ios' : 'material';
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
-        <App dark={true} safeAreas={true} theme={"parent" ? "material" : "ios"}>
+        <App dark={true} safeAreas={true} theme={theme}>
+
           <Component {...pageProps} />
+
         </App>
       </RainbowKitProvider>
     </WagmiConfig>
