@@ -14,7 +14,7 @@ import React from "react";
 import { FaHandHoldingUsd, FaBriefcase } from "react-icons/fa";
 import { GiFarmer } from "react-icons/gi";
 import { IoIosHome } from "react-icons/io";
-
+import { InjectedConnector } from "wagmi/connectors/injected";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -30,7 +30,7 @@ const Layout = ({ children }) => {
   useEffect(() => {
     if (window.ethereum && window.ethereum.isMiniPay) {
       setHideConnectBtn(true);
-      connect({ connector: injected({ target: "metaMask" }) });
+      connect({ connector: new InjectedConnector() });
     }
   }, []);
 
