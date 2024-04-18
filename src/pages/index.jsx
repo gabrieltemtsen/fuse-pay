@@ -75,6 +75,7 @@ export default function Home() {
         if (hash) {
           openNotification(setNotificationWithButton);
           setInTxn(false);
+          setSheetOpened(false);
         } else {
           setInTxn(false);
           setShowToast(false);
@@ -117,7 +118,7 @@ export default function Home() {
               </Button>
             }
           ></Toast>
-          <section class="bg-white dark:bg-gradient-to-b from-blue-700/[4.79] via-gray-800 h-full">
+          <section class="dark:bg-gradient-to-b from-blue-700/[4.79] via-gray-800 h-full">
             <div class="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-12">
               <a
                 href="https://celo.org"
@@ -371,7 +372,7 @@ export default function Home() {
                 </button>
               </div>
               <div class="p-4 md:p-5">
-                <form class="space-y-4">
+               
                   <div>
                     <label
                       for="email"
@@ -426,13 +427,13 @@ export default function Home() {
                     />
                   </div>
 
-                  <span
+                  <Button
                     onClick={createCompany}
                     class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     {inTxn ? <Preloader /> : "Create"}
-                  </span>
-                </form>
+                  </Button>
+               
               </div>
             </div>
           </div>

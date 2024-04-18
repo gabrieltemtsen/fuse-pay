@@ -248,7 +248,7 @@ const ViewCompany = () => {
 
           <span>
             {companyName} <br />
-            <span> Manage Company funds </span>
+            {admin === address ? <span className="text-sm"> Manage Company </span> : <span className="text-sm"> Company </span> }
           </span>
         </div>
 
@@ -357,6 +357,7 @@ const ViewCompany = () => {
                 Employee Name
               </label>
               <input
+                onChange={(e) => setEmployeeName(e.target.value)}
                 type="text"
                 id="text"
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -372,6 +373,7 @@ const ViewCompany = () => {
                 Employee Address
               </label>
               <input
+                onChange={(e) => setEmployeeAddress(e.target.value)}
                 type="text"
                 id="text"
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -387,6 +389,7 @@ const ViewCompany = () => {
                 Salary ($)
               </label>
               <input
+                onChange={(e) => setEmployeeWage(e.target.value)}
                 type="text"
                 id="text"
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
