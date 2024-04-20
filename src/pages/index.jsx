@@ -14,6 +14,7 @@ import {
   Toast,
   Chip,
 } from "konsta/react";
+import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import CeloICON from "/public/celo.png";
 import Image from "next/image";
@@ -25,8 +26,17 @@ import {
   FUSE_PAY_MANAGER_ADDRESS,
 } from "../utils/contracts";
 import { writeContract } from "@wagmi/core";
+import { useAccount, useBalance } from "wagmi";
+
 
 export default function Home() {
+  const {address} = useAccount();
+  const { data } = useBalance({
+    address
+  })
+   
+
+ 
   const [notificationWithButton, setNotificationWithButton] = useState(false);
   const [sheetOpened, setSheetOpened] = useState(false);
   const [companyName, setCompanyName] = useState("");
@@ -38,15 +48,29 @@ export default function Home() {
   const [showToast, setShowToast] = useState(false);
   const [alertOpened, setAlertOpened] = useState(false);
 
+ 
+
+
   const openNotification = (setter) => {
     setNotificationWithButton(false);
     setter(true);
   };
 
-  const handleUploadImage = (e) => {
-    setCompanyLogo(e.target.files);
-    setShowToast(true);
-    setCoverImageUrl(URL.createObjectURL(e.target.files[0]));
+  const handleUploadImage = async (e) => {
+    const file = e.target.files;
+    const allowedTypes = ["image/jpeg", "image/png"];
+    const maxSize = 2 * 1024 * 1024; // 3MB in bytes
+  
+    if (file) {
+    
+      if (file.size > maxSize) {
+        alert("File size exceeds the maximum allowed (3MB).");
+        return;
+      }
+  
+      setCompanyLogo(file);
+      setShowToast(true);
+    }
   };
 
   const createCompany = async () => {
@@ -85,9 +109,17 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
+      alert(error)
       setInTxn(false);
     }
   };
+  useEffect(() => {
+    getBal()
+
+    return () => {
+     
+    };
+  }, ); 
 
   return (
     <>
@@ -343,7 +375,7 @@ export default function Home() {
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
               <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                  Create a company workspace
+                  Create a company workspace celo: 
                 </h3>
                 <button
                   onClick={(e) => {
