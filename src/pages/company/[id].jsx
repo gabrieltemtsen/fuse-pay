@@ -202,6 +202,10 @@ const ViewCompany = () => {
 
   const addEmployee = async () => {
     try {
+
+      if (!employeeName || !employeeAddress || !employeeWage) {
+        return alert("Please fill all fields");
+      }
       const wage = ethers.utils.parseEther(employeeWage);
 
       const addWorker = await writeContract({
@@ -398,12 +402,12 @@ const ViewCompany = () => {
               />
             </div>
 
-            <button
-              type="submit"
+            <Button
+              onClick={addEmployee}
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Add employee
-            </button>
+            </Button>
           </form>
         </Block>
       </div>

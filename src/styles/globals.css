@@ -56,6 +56,17 @@ body {
   max-height: 94%;
   overflow-y: auto ;
 }
+.center-item {
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+
+  align-content: center;
+  max-width: 100vw;
+  width: 100%;
+
+
+}
 
 @layer utilities {
   .text-balance {
