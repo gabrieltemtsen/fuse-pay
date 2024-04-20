@@ -113,13 +113,7 @@ export default function Home() {
       setInTxn(false);
     }
   };
-  useEffect(() => {
-    getBal()
 
-    return () => {
-     
-    };
-  }, ); 
 
   return (
     <>
@@ -375,7 +369,7 @@ export default function Home() {
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
               <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                  Create a company workspace celo: 
+                  Create a company workspace 
                 </h3>
                 <button
                   onClick={(e) => {
