@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import axios from "axios";
 import {
   Page,
   Navbar,
@@ -11,6 +13,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Preloader,
   Table,
   List,
   ListItem,
@@ -26,7 +29,6 @@ import { FaMoneyCheckDollar, FaPeopleGroup } from "react-icons/fa6";
 import { useAccount } from "wagmi";
 import { shortenAddress } from "../../utils/shortenAddress";
 import { readContract, writeContract } from "@wagmi/core";
-import { useEffect, useState } from "react";
 import {
   FUSE_PAY_ABI,
   FUSE_PAY_MANAGER_ABI,
@@ -34,12 +36,9 @@ import {
   USDT_CONTRACT_ADDRESS,
   USDT_ABI,
 } from "../../utils/contracts";
-import axios from "axios";
-import { useRouter } from "next/router";
 
 const ViewCompany = () => {
   const { address } = useAccount();
-
   const router = useRouter();
 
   const [companyName, setCompanyName] = useState("");
@@ -54,6 +53,8 @@ const ViewCompany = () => {
   const [salary, setSalary] = useState(0);
   const [withdrawalAmount, setWithdrawalAmount] = useState("");
   const [companyBalance, setCompanyBalanace] = useState();
+  const [delayComplete, setDelayComplete] = useState(false);
+  const [inTxn, setInTxn] = useState(false);
 
   const { id } = router.query;
   const companyAddress = id;
@@ -65,6 +66,7 @@ const ViewCompany = () => {
     }
 
     try {
+      setInTxn(true);
       const ToApprove = ethers.utils.parseEther(depositAmount);
       console.log(Number(ToApprove));
       const { hash } = await writeContract({
@@ -81,36 +83,52 @@ const ViewCompany = () => {
         functionName: "depositUSDC",
         args: [ToApprove],
       });
+      setInTxn(false);
       getGroupInfo();
       if (deposit) {
-        toast.success("Deposited");
+        console.log("Deposited");
         // Clear input fields
         setDepositAmount("");
       }
     } catch (error) {
       console.log(error);
+      setInTxn(false);
     }
-    const paySalaries = async () => {
-      try {
-        const { hash } = await writeContract({
-          address: companyAddress,
-          abi: DEFI_WAGE_ABI,
-          functionName: "addMonthlySalaries",
-          args: [],
-        });
-        const receipt = await waitForTransaction({ hash });
-        if (!receipt) {
-          toast.error("Failed to pay salaries");
-          return;
-        }
-        getGroupInfo();
-      } catch (error) {
-        console.log(error);
-      }
-    };
   };
+  const paySalaries = async () => {
+    try {
+      setInTxn(true);
+      const {hash} = await writeContract({
+        address: companyAddress,
+        abi: FUSE_PAY_ABI,
+        functionName: "addMonthlySalaries",
+        args: [],
+      });
+      const receipt = await waitForTransaction({ hash });
+      if (!receipt) {
+        console.log("Failed to pay salaries");
+        setInTxn(false);
+        return;
+      }
+      getGroupInfo();
+      setInTxn(false);
+      
+    } catch (error) {
+      console.log(error)
+      setInTxn(false);
+      
+    }
+  }
+
   const withdrawWages = async () => {
     try {
+
+      if (!withdrawalAmount) {
+        alert("please enter amount");
+        return console.log("please enter amount");
+        
+      }
+      setInTxn(true);
       const depositAmountInWei = Number(withdrawalAmount) * Math.pow(10, 6);
 
       const ToApprove = ethers.utils.parseEther(withdrawalAmount);
@@ -134,9 +152,6 @@ const ViewCompany = () => {
   };
   const getGroupInfo = async () => {
     try {
-      
-
-
       const companyCID = await readContract({
         address: companyAddress,
         abi: FUSE_PAY_ABI,
@@ -183,7 +198,23 @@ const ViewCompany = () => {
       });
       setSalary(ethers.utils.formatEther(getEmployeeSalary));
 
-      setMembers(getEmployees);
+      let memberInfo = [];
+      let mmember = {};
+
+      for (let i = 0; i < getEmployees.length; i++) {
+        const employeeName = await readContract({
+          address: companyAddress,
+          abi: FUSE_PAY_ABI,
+          functionName: "employeeNames",
+          args: [getEmployees[i]],
+        });
+        member = {
+          employeeAddress: getEmployees[i],
+          name: employeeName,
+        };
+        memberInfo.push(member);
+      }
+      setMembers(memberInfo);
 
       let config = {
         method: "get",
@@ -196,16 +227,26 @@ const ViewCompany = () => {
       setCompanyName(companyData.companyName);
       setCompanyLogo(companyData.companyLogo);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
+  // const getEmployeeName = async (employeeAddr) => {
+  //   const getEmployees = await readContract({
+  //     address: companyAddress,
+  //     abi: FUSE_PAY_ABI,
+  //     functionName: "employeeNames",
+  //     args: [employeeAddr],
+  //   });
+
+  // }
+
   const addEmployee = async () => {
     try {
-
       if (!employeeName || !employeeAddress || !employeeWage) {
         return alert("Please fill all fields");
       }
+      setInTxn(true);
       const wage = ethers.utils.parseEther(employeeWage);
 
       const addWorker = await writeContract({
@@ -217,50 +258,72 @@ const ViewCompany = () => {
       getGroupInfo();
 
       if (addWorker) {
-        toast.success("Successfull");
+        console.log('Succcesss')
       }
+      setInTxn(false)
 
-      // Clear input fields
-      // setNames([]);
-      // setWeights([]);
     } catch (error) {
-      console.error("Error adding dimensions:", error);
+      console.error("Error adding worker:", error);
+      setInTxn(false)
     }
   };
-  getGroupInfo();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDelayComplete(true);
+    }, 4500); // 4.5 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     getGroupInfo();
 
-    // You can also return a cleanup function if needed
     return () => {
-      // This code will run when the component unmounts
-      // You can clean up any resources or subscriptions here
+      // cleanup
     };
-  }, [address, salary, walletBalance, companyAddress]); // The empty dependency array means this effect runs once, like componentDidMount
+  }, [address, salary, walletBalance, companyAddress]); 
+
+  if (!delayComplete) {
+    return (
+      <Layout>
+        <Block strong insetMaterial outlineIos className="text-center">
+          <Preloader />
+        </Block>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <Navbar title="companyTitle" />
+      <Navbar title="Company" />
 
       <div className="m-5">
         <div className="company-logo">
           <img
             class="w-20 h-20 rounded-full"
             src={`https://gateway.lighthouse.storage/ipfs/${companyLogo}`}
-            alt="Large avatar"
+            alt="Fuse"
           ></img>
 
           <span>
             {companyName} <br />
-            {admin === address ? <span className="text-sm"> Manage Company </span> : <span className="text-sm"> Company </span> }
+            {admin === address ? (
+              <span className="text-sm"> Manage Company </span>
+            ) : (
+              <span className="text-sm"> Company </span>
+            )}
           </span>
         </div>
 
-        <Block className="flex flex-wrap max-w-sm">
+       
+
+        {admin === address && (
+          <>
+           <Block className="flex flex-wrap max-w-sm">
           <div className="company-stats">
             <div className="stats">
               <FaWallet />
-              <span>$1000</span>
+              <span> {companyBalance} cUSD </span>
               <span>Treasury</span>
             </div>
 
@@ -277,26 +340,7 @@ const ViewCompany = () => {
             </div>
           </div>
         </Block>
-        <BlockTitle>FusePay Wallet</BlockTitle>
-        <Block strong inset>
-          Your Balance: <strong>10cUSD</strong>{" "}
-          <span className="font-bold ml-4 mr-4">| </span> Your monthly Salary:{" "}
-          <strong>500cUSD</strong>
-          <div>
-            <input
-              className="py-2 px-3 pr-11 block ml-2 mt-1  border-gray-200 shadow-sm -mt-px -ml-px first:rounded-t-lg last:rounded-b-lg sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
-              type="text"
-            />
-            <button
-              type="button"
-              className="py-2 ml-2 mt-3  px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium shadow-lg shadow-transparent hover:shadow-blue-700/50 border border-transparentfocus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-            >
-              Withdraw Salary
-            </button>
-          </div>
-        </Block>
-
-        <BlockTitle>Employees</BlockTitle>
+            <BlockTitle>Employees</BlockTitle>
         <Card className="block overflow-x-auto mt-8" contentWrap={false}>
           <Table>
             <TableHead>
@@ -309,17 +353,21 @@ const ViewCompany = () => {
                   Address/Phone
                 </TableCell>
                 <TableCell header className="text-right">
-                  Status
+                  Monthly Award
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell className="text-right">159</TableCell>
+              {members.map((member, index)=>(
+                <TableRow key={++index}>
+                <TableCell>{++count}</TableCell>
+                <TableCell className="text-right">{member.employeeAddress}</TableCell>
                 <TableCell className="text-right">6.0</TableCell>
-                <TableCell className="text-right">24</TableCell>
+                <TableCell className="text-right"> <Button>Select</Button>   </TableCell>
               </TableRow>
+
+              ))}
+              
               <TableRow>
                 <TableCell>2</TableCell>
                 <TableCell className="text-right">237</TableCell>
@@ -331,28 +379,38 @@ const ViewCompany = () => {
         </Card>
         <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
 
+        <BlockTitle>Employee Of The Month 🎉</BlockTitle>
+        <Block>
+          <h1>🎉🎉Honorable, Jambosko 🎉🎉 </h1>
+          <br />
+          0xgabe
+        </Block>
+
+        <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+
         <BlockTitle>Finance</BlockTitle>
 
         <Block>
-          <Button>Pay Salaries</Button>
+          {inTxn ? <Preloader className="center-item mt-3" /> : <Button onClick={paySalaries} >Pay Salaries</Button> }
+          
           <div className="mt-4">
             <h1>Deposit to Company Treasury</h1>
             <input
               className="py-2 px-3 pr-11 block ml-2 mt-1  border-gray-200 shadow-sm -mt-px -ml-px first:rounded-t-lg last:rounded-b-lg sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
               type="text"
             />
-            <button
-              type="button"
+            {inTxn ? <Preloader className="center-item mt-3" /> :  <Button
+              onClick={depositToCompany}              
               className="py-2 ml-2 mt-3  px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium shadow-lg shadow-transparent hover:shadow-blue-700/50 border border-transparentfocus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
             >
               Deposit
-            </button>
+            </Button>}
           </div>
         </Block>
         <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
         <BlockTitle>Add Employee</BlockTitle>
         <Block>
-          <form class="max-w-sm mx-auto">
+          <div class="max-w-sm mx-auto">
             <div class="mb-5">
               <label
                 for="name"
@@ -402,13 +460,40 @@ const ViewCompany = () => {
               />
             </div>
 
-            <Button
+            {inTxn ?  <Preloader className="center-item mt-3" /> : <Button
               onClick={addEmployee}
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Add employee
-            </Button>
-          </form>
+            </Button> }
+
+            
+          </div>
+        </Block>
+          
+          </>
+        )  }
+
+      
+        <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+        <BlockTitle>FusePay Wallet</BlockTitle>
+        <Block strong inset>
+          Your Balance: <strong>10cUSD</strong>{" "}
+          <span className="font-bold ml-4 mr-4">| </span> Your monthly Salary:{" "}
+          <strong>500cUSD</strong>
+          <div>
+            <input
+              className="py-2 px-3 pr-11 block ml-2 mt-1  border-gray-200 shadow-sm -mt-px -ml-px first:rounded-t-lg last:rounded-b-lg sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-800 dark:border-gray-700 dark:text-gray-400"
+              type="text"
+            />
+            {inTxn ? <Preloader className="center-item mt-3" /> : <Button
+             onClick={withdrawWages}
+              className="py-2 ml-2 mt-3  px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium shadow-lg shadow-transparent hover:shadow-blue-700/50 border border-transparentfocus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+            >
+              Withdraw Salary
+            </Button>}
+            
+          </div>
         </Block>
       </div>
     </Layout>

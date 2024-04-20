@@ -34,8 +34,6 @@ export default function Home() {
   const { data } = useBalance({
     address
   })
-   
-
  
   const [notificationWithButton, setNotificationWithButton] = useState(false);
   const [sheetOpened, setSheetOpened] = useState(false);
@@ -85,7 +83,7 @@ export default function Home() {
           companyDescription: description,
         };
         console.log("IMAGE INSERTED");
-
+ // 0x763b9295081c8e04F444F44A1cF14D7379F579c2
         const companyCID = await putJSONandGetHash(obj, companyName);
         console.log("COMPANY INSERTED", companyCID);
         console.log(FUSE_PAY_MANAGER_ADDRESS);

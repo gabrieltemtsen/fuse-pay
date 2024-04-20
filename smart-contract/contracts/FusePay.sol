@@ -7,8 +7,10 @@ contract FusePay {
     string public companyCID;
     uint public companyID;
     address public admin;
+    address public employeeAward;
     address[] public employees;
     mapping(address => uint256) public employeeSalaries;
+    mapping(address => string) public employeeNames;
     mapping(address => uint256) public employeeWalletBalances;
 
      enum LoanStatus {
@@ -54,6 +56,11 @@ mapping(address => Loan[]) public loans;
         employeeWalletBalances[_employeeAddress] = 0; // Initialize wallet balance to zero
         return true;
     }
+    
+    function setEmployeeName(address _employeeAddress, string memory _name) public returns (bool) {
+        employeeNames[_employeeAddress] = _name;
+        return true;
+    }
 
     function setEmployeeSalary(address _employeeAddress, uint256 _salary) public  returns (bool) {
         employeeSalaries[_employeeAddress] = _salary;
@@ -71,9 +78,16 @@ mapping(address => Loan[]) public loans;
     function getEmployees() public view returns (address[] memory) {
         return employees;
     }
+    function getEmployeeName(address _employeeAddress) public view returns (string memory) {
+        return employeeNames[_employeeAddress];
+    }
 
     function getAdmin() public view returns (address) {
         return admin;
+    }
+
+    function selectEmployeeAward(address _employeeAddress) public  onlyAdmin {
+      employeeAward = _employeeAddress;        
     }
 
     function addMonthlySalaries() public onlyAdmin {
@@ -82,6 +96,8 @@ mapping(address => Loan[]) public loans;
             uint256 salary = employeeSalaries[employee];
             employeeWalletBalances[employee] += salary;
         }
+
+        //deduct Salaries from loan
     }
 
       function withdrawSalary(uint256 _amount) public {

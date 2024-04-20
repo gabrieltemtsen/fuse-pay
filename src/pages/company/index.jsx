@@ -8,6 +8,7 @@ import {
   Button,
   List,
   ListItem,
+  Preloader,
   Fab,
   Link,
   Sheet,
@@ -34,6 +35,8 @@ export default function Index() {
   const router = useRouter();
 
   const [userCompanies, setUserCompanies] = useState([]);
+  const [delayComplete, setDelayComplete] = useState(false);
+
 
   const [adminCompanies, setAdminCompanies] = useState([]);
 
@@ -45,7 +48,7 @@ export default function Index() {
   };
 
   const getAdmins = () => {
-    console.log("HkELLp", isAdmin);
+    console.log("hey", isAdmin);
     for (let i = 0; i < allAdmins.length; i++) {
       if (address == allAdmins[i]) {
         console.log(true);
@@ -92,7 +95,7 @@ export default function Index() {
 
         const admin = await readContract({
           address: employeeCompanies[i],
-          abi: DEFI_WAGE_ABI,
+          abi: FUSE_PAY_ABI,
           functionName: "admin",
           args: [],
         });
@@ -157,9 +160,18 @@ export default function Index() {
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDelayComplete(true);
+
+    }, 4500); // 4.5 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     getAdmins();
     getUserCompanies();
-  }, []);
+  }, [address]);
 
   return (
     <Layout>
@@ -186,7 +198,11 @@ export default function Index() {
               />
             ))
           ) : (
-            <ListItem title="No Companies yet" />
+            delayComplete ?  <ListItem title="No Companies yet" /> : 
+            <Block strong insetMaterial outlineIos className="text-center">
+            <Preloader />
+          </Block>
+            
           )}
         </List>
 
@@ -212,7 +228,11 @@ export default function Index() {
               />
             ))
           ) : (
-            <ListItem title="No Companies yet" />
+            delayComplete ?  <ListItem title="No Companies yet" /> : 
+            <Block strong insetMaterial outlineIos className="text-center">
+            <Preloader />
+          </Block>
+            
           )}
           <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
         </List>
