@@ -387,7 +387,7 @@ const [textCopied, setTextCopied] = useState(false);
           ></img>
 
           <span>
-            {companyName} {admin} <br />
+            {companyName} <br />
             {admin === address ? (
               <span className="text-sm"> Manage Company </span>
             ) : (
@@ -426,7 +426,7 @@ const [textCopied, setTextCopied] = useState(false);
 
             <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
 
-        {admin === address && (
+        {admin == address && (
           <>
             <Block className="flex flex-wrap max-w-sm">
               <div className="company-stats">
