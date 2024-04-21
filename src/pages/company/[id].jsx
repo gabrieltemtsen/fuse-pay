@@ -288,13 +288,18 @@ const [textCopied, setTextCopied] = useState(false);
       });
 
       if(awardee) {
-        setAwardGiven(true);
+        
         const Name = await readContract({
           address: companyAddress,
           abi: FUSE_PAY_ABI,
           functionName: "employeeNames",
           args: [awardee],
         });
+        if(!Name) {
+          setAwardGiven(false);
+          return;
+        }
+        setAwardGiven(true);
         const winner = {
           name: Name,
           address: awardee,
@@ -345,7 +350,7 @@ const [textCopied, setTextCopied] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => {
       setDelayComplete(true);
-    }, 4500); // 4.5 seconds delay
+    }, 5000); // 4.5 seconds delay
 
     return () => clearTimeout(timer);
   }, []);
@@ -357,6 +362,7 @@ const [textCopied, setTextCopied] = useState(false);
       // cleanup
     };
   }, [address, salary, walletBalance, companyAddress]);
+  alert(admin)
 
   if (!delayComplete) {
     return (
@@ -399,21 +405,21 @@ const [textCopied, setTextCopied] = useState(false);
 
               
               <h1>
-  {shortenAddress(awardee.address)}{' '}
-  <FaCopy
-    className={`cursor-pointer ${textCopied ? 'text-green-500' : ''}`}
-    onClick={(e) => {
-      const textField = document.createElement('textarea');
-      textField.innerText = awardee.address;
-      document.body.appendChild(textField);
-      textField.select();
-      document.execCommand('copy');
-      setTextCopied(true);
-      textField.remove();
-      ;
-    }}
-  />
-</h1>
+            {shortenAddress(awardee.address)}{' '}
+            <FaCopy
+              className={`cursor-pointer ${textCopied ? 'text-green-500' : ''}`}
+              onClick={(e) => {
+                const textField = document.createElement('textarea');
+                textField.innerText = awardee.address;
+                document.body.appendChild(textField);
+                textField.select();
+                document.execCommand('copy');
+                setTextCopied(true);
+                textField.remove();
+                ;
+              }}
+            />
+          </h1>
               </>) : <h1>Not selected</h1>}
              
             </Block>
