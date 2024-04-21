@@ -278,43 +278,43 @@ const [textCopied, setTextCopied] = useState(false);
     }
   };
 
-  const getAwardee = async () => {
-    try {
-      const awardee = await readContract({
-        address: companyAddress,
-        abi: FUSE_PAY_ABI,
-        functionName: "employeeAward",
-        args: [],
-      });
+  // const getAwardee = async () => {
+  //   try {
+  //     const awardee = await readContract({
+  //       address: companyAddress,
+  //       abi: FUSE_PAY_ABI,
+  //       functionName: "employeeAward",
+  //       args: [],
+  //     });
 
-      if(awardee) {
+  //     if(awardee) {
         
-        const Name = await readContract({
-          address: companyAddress,
-          abi: FUSE_PAY_ABI,
-          functionName: "employeeNames",
-          args: [awardee],
-        });
-        if(!Name) {
-          setAwardGiven(false);
-          return;
-        }
-        setAwardGiven(true);
-        const winner = {
-          name: Name,
-          address: awardee,
-        }
-        setAwardee(winner);
+  //       const Name = await readContract({
+  //         address: companyAddress,
+  //         abi: FUSE_PAY_ABI,
+  //         functionName: "employeeNames",
+  //         args: [awardee],
+  //       });
+  //       if(!Name) {
+  //         setAwardGiven(false);
+  //         return;
+  //       }
+  //       setAwardGiven(true);
+  //       const winner = {
+  //         name: Name,
+  //         address: awardee,
+  //       }
+  //       setAwardee(winner);
 
-      }else{
-        setAwardGiven(false);
-      }
+  //     }else{
+  //       setAwardGiven(false);
+  //     }
 
       
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
 
   const addEmployee = async () => {
@@ -357,7 +357,7 @@ const [textCopied, setTextCopied] = useState(false);
 
   useEffect(() => {
     getGroupInfo();
-    getAwardee()
+    // getAwardee()
     return () => {
       // cleanup
     };
@@ -396,7 +396,7 @@ const [textCopied, setTextCopied] = useState(false);
           </span>
         </div>
 
-        <BlockTitle>Employee Of The Month 🎉</BlockTitle>
+        {/* <BlockTitle>Employee Of The Month 🎉</BlockTitle>
             <Block>
               {awardGiven ? (<>
                 <h1>🎉🎉Honorable, {awardee.name} 🎉🎉 </h1>
@@ -422,7 +422,7 @@ const [textCopied, setTextCopied] = useState(false);
           </h1>
               </>) : <h1>Not selected</h1>}
              
-            </Block>
+            </Block> */}
 
             <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
 

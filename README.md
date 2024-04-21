@@ -1,40 +1,58 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Fuse Pay - Decentralized Payroll Platform
+
+Fuse Pay is a decentralized payroll platform that enables businesses to seamlessly make monthly payments to their employees. With Fuse Pay, companies can manage their payroll more efficiently, while employees enjoy the convenience of accessing their salaries through a user-friendly interface.
+
+## Features
+
+- **Easy Registration**: Companies can easily register on Fuse Pay and set up their payroll system within minutes.
+
+- **Seamless Payroll Management**: Employers can add employees to the payroll and initiate payments effortlessly.
+
+- **Instant Salary Access**: Employees can access their salaries instantly through their Fuse Pay wallet.
+
+- **Withdrawal Options**: Employees can choose to withdraw their salaries to their connected wallets with ease.
+
+- **Staking for Interests**: Fuse Pay allows employees to stake their funds to earn interests, providing them with additional income opportunities.
+
+- **Loan Management**: Employees can apply for a loan from their company and repay it through their salary payments.
+
+## How It Works
+
+1. **Company Registration**: Companies register on Fuse Pay and set up their payroll system.
+
+2. **Add Employees**: Employers add their employees to the payroll system.
+
+3. **Initiate Payments**: Companies initiate payments to their employees through Fuse Pay.
+
+4. **Employee Access**: Employees access their salaries instantly through their Fuse Pay wallet.
+
+5. **Withdrawal and Staking**: Employees can choose to withdraw their salaries to their connected wallets or stake their funds for interests.
+
+6. **Loan Management**: Employees can apply for a loan from their company and repay it through their salary payments.
 
 ## Getting Started
 
-First, run the development server:
+To get started with Fuse Pay, follow these simple steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Register Your Company**: Sign up on Fuse Pay and register your company.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Add Employees**: Add your employees to the payroll system.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+3. **Initiate Payments**: Easily initiate payments to your employees each month.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+4. **Employee Access**: Employees can access their salaries instantly through Fuse Pay.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+5. **Withdrawal and Staking**: Employees can choose to withdraw their salaries to their connected wallets or stake their funds for interests.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+6. **Loan Management**: Employees can apply for a loan from your company and repay it through their salary payments.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Support
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+If you need any assistance or have any questions, feel free to contact us at support@fusepay.com.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Fuse Pay is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
