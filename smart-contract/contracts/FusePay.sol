@@ -46,7 +46,7 @@ mapping(address => Loan[]) public loans;
     }
 
     function depositUSDC(uint256 amount) public onlyAdmin payable {
-        IERC20 usdc = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);
+        IERC20 usdc = IERC20(0x765DE816845861e75A25fCA122bb6898B8B1282a);
         
         require(usdc.transferFrom(admin, payable(address(this)), amount), 'Deposit failed');
     }
@@ -105,8 +105,10 @@ mapping(address => Loan[]) public loans;
         uint256 balance = employeeWalletBalances[employee];
         require(balance > 0, 'No salary to withdraw');
         require(balance >= _amount, 'Amount exceeds balance');
+        // TESTNET : 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1
+        // MAINNET : 0x765DE816845861e75A25fCA122bb6898B8B1282a
 
-        IERC20 usdc = IERC20(0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1);
+        IERC20 usdc = IERC20(0x765DE816845861e75A25fCA122bb6898B8B1282a);
         require(usdc.transfer(employee, _amount), 'Transfer failed');
         uint256 newBal = employeeWalletBalances[employee] - _amount; 
         employeeWalletBalances[employee] = newBal;
@@ -123,7 +125,7 @@ mapping(address => Loan[]) public loans;
 
         uint256 loanAmount = loans[_employeeAddress][loans[_employeeAddress].length - 1].loanAmount;
     address requester = _employeeAddress;
-        address stablecoinAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1; //CUSD
+        address stablecoinAddress = 0x765DE816845861e75A25fCA122bb6898B8B1282a; //CUSD
         IERC20 stablecoin = IERC20(stablecoinAddress);
         require(stablecoin.transfer(requester, loanAmount), 'Transfer of funds failed');
     }

@@ -36,6 +36,7 @@ import {
   USDT_ABI,
 } from "../../utils/contracts";
 import Notify from "@/components/notify";
+import { FaCopy } from "react-icons/fa";
 
 const ViewCompany = () => {
   const { address } = useAccount();
@@ -58,6 +59,9 @@ const ViewCompany = () => {
   const [inTxnSalary, setInTxnSalary] = useState(false);
   const [inTxnEmployee, setInTxnEmployee] = useState(false);
   const [inTxnEmployeeAward, setInTxnEmployeeAward] = useState(false);
+  const [awardGiven, setAwardGiven] = useState(false);
+  const [awardee, setAwardee] = useState();
+const [textCopied, setTextCopied] = useState(false);
 
 
   const [inTxnWithdraw, setInTxnWithdraw] = useState(false);
@@ -128,9 +132,16 @@ const ViewCompany = () => {
     }
   };
   const AwardEmployee = async (employeeAddr) => {
+  
     try {
       setInTxnEmployeeAward(true);
+      if (!employeeAddr) {
+        alert("please enter amount");
+        return console.log("please enter amount");
+      }
+
       const { hash } = await writeContract({
+
         address: companyAddress,
         abi: FUSE_PAY_ABI,
         functionName: "selectEmployeeAward",
@@ -234,7 +245,7 @@ const ViewCompany = () => {
       setSalary(ethers.utils.formatEther(getEmployeeSalary));
 
       let memberInfo = [];
-      let mmember = {};
+      let member = {};
 
       for (let i = 0; i < getEmployees.length; i++) {
         const employeeName = await readContract({
@@ -267,9 +278,43 @@ const ViewCompany = () => {
     }
   };
 
+  const getAwardee = async () => {
+    try {
+      const awardee = await readContract({
+        address: companyAddress,
+        abi: FUSE_PAY_ABI,
+        functionName: "employeeAward",
+        args: [],
+      });
+
+      if(awardee) {
+        setAwardGiven(true);
+        const Name = await readContract({
+          address: companyAddress,
+          abi: FUSE_PAY_ABI,
+          functionName: "employeeNames",
+          args: [awardee],
+        });
+        const winner = {
+          name: Name,
+          address: awardee,
+        }
+        setAwardee(winner);
+
+      }else{
+        setAwardGiven(false);
+      }
+
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   const addEmployee = async () => {
     try {
-      if (!employeeName || !employeeAddress || !employeeWage) {
+      if (!employeeName  || !employeeName || !employeeAddress || !employeeWage) {
         return alert("Please fill all fields");
       }
       setInTxnEmployee(true);
@@ -279,18 +324,21 @@ const ViewCompany = () => {
         address: FUSE_PAY_MANAGER_ADDRESS,
         abi: FUSE_PAY_MANAGER_ABI,
         functionName: "addEmployee",
-        args: [employeeAddress, companyAddress, wage],
+        args: [employeeAddress, companyAddress, wage, employeeName],
       });
-      getGroupInfo();
+      
 
       if (addWorker) {
         console.log("Succcesss");
         // Show notification
+        alert("Employee added successfully");
         setNotifyOpen(true);
+        getGroupInfo();
       }
       setInTxnEmployee(false);
     } catch (error) {
       console.error("Error adding worker:", error);
+      alert(error)
       setInTxnEmployee(false);
     }
   };
@@ -304,7 +352,7 @@ const ViewCompany = () => {
 
   useEffect(() => {
     getGroupInfo();
-
+    getAwardee()
     return () => {
       // cleanup
     };
@@ -341,6 +389,36 @@ const ViewCompany = () => {
             )}
           </span>
         </div>
+
+        <BlockTitle>Employee Of The Month 🎉</BlockTitle>
+            <Block>
+              {awardGiven ? (<>
+                <h1>🎉🎉Honorable, {awardee.name} 🎉🎉 </h1>
+              <br />
+       
+
+              
+              <h1>
+  {shortenAddress(awardee.address)}{' '}
+  <FaCopy
+    className={`cursor-pointer ${textCopied ? 'text-green-500' : ''}`}
+    onClick={(e) => {
+      const textField = document.createElement('textarea');
+      textField.innerText = awardee.address;
+      document.body.appendChild(textField);
+      textField.select();
+      document.execCommand('copy');
+      setTextCopied(true);
+      textField.remove();
+      ;
+    }}
+  />
+</h1>
+              </>) : <h1>Not selected</h1>}
+             
+            </Block>
+
+            <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
 
         {admin === address && (
           <>
@@ -387,11 +465,11 @@ const ViewCompany = () => {
                     <TableRow key={++index}>
                       <TableCell>{++count}</TableCell>
                       <TableCell className="text-right">
-                        {member.employeeAddress}
+                        {member.name}
                       </TableCell>
-                      <TableCell className="text-right">6.0</TableCell>
+                      <TableCell className="text-right">{member.employeeAddress}</TableCell>
                       <TableCell className="text-right">
-                        <Button onClick={AwardEmployee(member.employeeAddress)}>Award</Button>{" "}
+                        <Button onClick={(e)=> {e.preventDefault(), AwardEmployee(member.employeeAddress)}}>Award</Button>{" "}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -400,14 +478,7 @@ const ViewCompany = () => {
             </Card>
             <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
 
-            <BlockTitle>Employee Of The Month 🎉</BlockTitle>
-            <Block>
-              <h1>🎉🎉Honorable, Jambosko 🎉🎉 </h1>
-              <br />
-              0xgabe
-            </Block>
-
-            <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+          
 
             <BlockTitle>Finance</BlockTitle>
 
