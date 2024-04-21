@@ -362,7 +362,7 @@ const [textCopied, setTextCopied] = useState(false);
       // cleanup
     };
   }, [address, salary, walletBalance, companyAddress]);
-  alert(admin)
+  
 
   if (!delayComplete) {
     return (
@@ -387,7 +387,7 @@ const [textCopied, setTextCopied] = useState(false);
           ></img>
 
           <span>
-            {companyName} <br />
+            {companyName} {admin} <br />
             {admin === address ? (
               <span className="text-sm"> Manage Company </span>
             ) : (
