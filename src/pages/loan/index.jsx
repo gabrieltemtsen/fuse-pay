@@ -44,11 +44,13 @@ const Index = () => {
   const [companyAddress, setCompanyAddress] = useState(''); 
   const [reason, setReason] = useState(''); 
   const [userCompanies, setUserCompanies] = useState([]);
-  const [admin, setAdmin] = useState(false);
+  const [allAdmins, setAllAdmins] = useState([]);
+  const [adminCompanies, setAdminCompanies] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const [loanRequests, setLoanRequests] = useState([]);
 
-
+ 
 
   const requestLoan = async () => {
     try {
@@ -196,15 +198,28 @@ const Index = () => {
         }
       }
       setUserCompanies(companyInfo);
-      setAdmin(allAdmin)
+      setAllAdmins(allAdmin)
+      setAdminCompanies(adminCompanyInfo);
+      console.log(allAdmin)
 
     } catch (error) {
       console.log(error);
     }
   };
+  const getAdmins = () => {
+    console.log("hey", isAdmin);
+    for (let i = 0; i < allAdmins.length; i++) {
+      if (address == allAdmins[i]) {
+        console.log(true);
+        setIsAdmin(true);
+      }
+      setIsAdmin(false);
+    }
+  };
 
   useEffect(() => {
     getUserCompanies();
+    getAdmins()
     
   }, [address]);
   return (
@@ -288,84 +303,62 @@ const Index = () => {
           </div>
         </Block>
 
-        {admin == address ? (
-          <>
-
-<BlockTitle>Loan Requests</BlockTitle>
-
-<Block>
-<div class="mb-5">
-      <label
-        for="name"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >
-       Select Company to get Requests
-      </label>
-      <select
-        onChange={(e) => getAllLoanRequests(e.target.value)}
-        type="text"
-        id="text"
-        class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-        placeholder="100"
-        required
-      >
-        <option value=""  >Select Company</option>
-        { userCompanies.length > 0 ? userCompanies.map((company, index) => (
-
-          <option key={++index} value={company.companyAddress}>{company.companyData.companyName}</option>
-        
-        )): <option value="">No Company</option>}
-      
-
-
+        {adminCompanies.length > 0 && (
+  <>
+    <BlockTitle>Loan Requests</BlockTitle>
+    <Block>
+      <div class="mb-5">
+        <label
+          for="name"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >
+          Select Company to get Requests
+        </label>
+        <select
+          onChange={(e) => getAllLoanRequests(e.target.value)}
+          type="text"
+          id="text"
+          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+          placeholder="100"
+          required
+        >
+          <option value="">Select Company</option>
+          {adminCompanies.map((company, index) => (
+            <option key={index} value={company.companyAddress}>
+              {company.companyData.companyName}
+            </option>
+          ))}
         </select>
-    </div>
-</Block>
+      </div>
+    </Block>
 
+    <Card className="block overflow-x-auto mt-8" contentWrap={false}>
+      <Table>
+        <TableHead>
+          <TableRow header>
+            <TableCell header>SN</TableCell>
+            <TableCell header className="text-right">
+              Employee Name
+            </TableCell>
+            <TableCell header className="text-right">
+              Address/Phone
+            </TableCell>
+            <TableCell header className="text-right">
+              Loan Amount
+            </TableCell>
+            <TableCell header className="text-right">
+              Loan Status
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {/* Render loan requests here */}
+        </TableBody>
+      </Table>
+    </Card>
+  </>
+)}
 
-<Card className="block overflow-x-auto mt-8" contentWrap={false}>
-  
-  <Table>
-    <TableHead>
-      <TableRow header>
-        <TableCell header>SN </TableCell>
-        <TableCell header className="text-right">
-          Employee Name
-        </TableCell>
-        <TableCell header className="text-right">
-          Address/Phone
-        </TableCell>
-        <TableCell header className="text-right">
-          Loan Amount
-        </TableCell>
-        <TableCell header className="text-right">
-          Loan Status
-        </TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      <TableRow>
-        <TableCell>1</TableCell>
-        <TableCell className="text-right">159</TableCell>
-        <TableCell className="text-right">6.0</TableCell>
-        <TableCell className="text-right">6.0</TableCell>
-
-        <TableCell className="text-right">24</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>2</TableCell>
-        <TableCell className="text-right">237</TableCell>
-        <TableCell className="text-right">9.0</TableCell>
-        <TableCell className="text-right">6.0</TableCell>
-
-        <TableCell className="text-right">37</TableCell>
-      </TableRow>
-    </TableBody>
-  </Table>
-</Card>
-          
-          </>
-        ) : null}
 
         
         <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
