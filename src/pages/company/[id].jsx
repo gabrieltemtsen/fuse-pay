@@ -61,8 +61,7 @@ const ViewCompany = () => {
   const [inTxnEmployeeAward, setInTxnEmployeeAward] = useState(false);
   const [awardGiven, setAwardGiven] = useState(false);
   const [awardee, setAwardee] = useState();
-const [textCopied, setTextCopied] = useState(false);
-
+  const [textCopied, setTextCopied] = useState(false);
 
   const [inTxnWithdraw, setInTxnWithdraw] = useState(false);
   const [numberOfEmployees, setNumberOfEmployees] = useState(0);
@@ -132,7 +131,6 @@ const [textCopied, setTextCopied] = useState(false);
     }
   };
   const AwardEmployee = async (employeeAddr) => {
-  
     try {
       setInTxnEmployeeAward(true);
       if (!employeeAddr) {
@@ -141,7 +139,6 @@ const [textCopied, setTextCopied] = useState(false);
       }
 
       const { hash } = await writeContract({
-
         address: companyAddress,
         abi: FUSE_PAY_ABI,
         functionName: "selectEmployeeAward",
@@ -168,8 +165,7 @@ const [textCopied, setTextCopied] = useState(false);
         return console.log("please enter amount");
       }
       setInTxnWithdraw(true);
-      const depositAmountInWei =
-        Number(withdrawalAmount) * Math.pow(10, 6);
+      const depositAmountInWei = Number(withdrawalAmount) * Math.pow(10, 6);
 
       const ToApprove = ethers.utils.parseEther(withdrawalAmount);
       console.log(Number(ToApprove));
@@ -278,48 +274,43 @@ const [textCopied, setTextCopied] = useState(false);
     }
   };
 
-  // const getAwardee = async () => {
-  //   try {
-  //     const awardee = await readContract({
-  //       address: companyAddress,
-  //       abi: FUSE_PAY_ABI,
-  //       functionName: "employeeAward",
-  //       args: [],
-  //     });
+  const getAwardee = async () => {
+    try {
+      const awardee = await readContract({
+        address: companyAddress,
+        abi: FUSE_PAY_ABI,
+        functionName: "employeeAward",
+        args: [],
+      });
 
-  //     if(awardee) {
-        
-  //       const Name = await readContract({
-  //         address: companyAddress,
-  //         abi: FUSE_PAY_ABI,
-  //         functionName: "employeeNames",
-  //         args: [awardee],
-  //       });
-  //       if(!Name) {
-  //         setAwardGiven(false);
-  //         return;
-  //       }
-  //       setAwardGiven(true);
-  //       const winner = {
-  //         name: Name,
-  //         address: awardee,
-  //       }
-  //       setAwardee(winner);
-
-  //     }else{
-  //       setAwardGiven(false);
-  //     }
-
-      
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
+      if (awardee) {
+        const Name = await readContract({
+          address: companyAddress,
+          abi: FUSE_PAY_ABI,
+          functionName: "employeeNames",
+          args: [awardee],
+        });
+        if (!Name) {
+          setAwardGiven(false);
+          return;
+        }
+        setAwardGiven(true);
+        const winner = {
+          name: Name,
+          address: awardee,
+        };
+        setAwardee(winner);
+      } else {
+        setAwardGiven(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const addEmployee = async () => {
     try {
-      if (!employeeName  || !employeeName || !employeeAddress || !employeeWage) {
+      if (!employeeName || !employeeName || !employeeAddress || !employeeWage) {
         return alert("Please fill all fields");
       }
       setInTxnEmployee(true);
@@ -331,7 +322,6 @@ const [textCopied, setTextCopied] = useState(false);
         functionName: "addEmployee",
         args: [employeeAddress, companyAddress, wage, employeeName],
       });
-      
 
       if (addWorker) {
         console.log("Succcesss");
@@ -343,7 +333,7 @@ const [textCopied, setTextCopied] = useState(false);
       setInTxnEmployee(false);
     } catch (error) {
       console.error("Error adding worker:", error);
-      alert(error)
+      alert(error);
       setInTxnEmployee(false);
     }
   };
@@ -357,12 +347,11 @@ const [textCopied, setTextCopied] = useState(false);
 
   useEffect(() => {
     getGroupInfo();
-    // getAwardee()
+    getAwardee();
     return () => {
       // cleanup
     };
   }, [address, salary, walletBalance, companyAddress]);
-  
 
   if (!delayComplete) {
     return (
@@ -396,35 +385,35 @@ const [textCopied, setTextCopied] = useState(false);
           </span>
         </div>
 
-        {/* <BlockTitle>Employee Of The Month 🎉</BlockTitle>
-            <Block>
-              {awardGiven ? (<>
-                <h1>🎉🎉Honorable, {awardee.name} 🎉🎉 </h1>
+        <BlockTitle>Employee Of The Month 🎉</BlockTitle>
+        <Block>
+          {awardGiven ? (
+            <>
+              <h1>🎉🎉Honorable, {awardee.name} 🎉🎉 </h1>
               <br />
-       
 
-              
               <h1>
-            {shortenAddress(awardee.address)}{' '}
-            <FaCopy
-              className={`cursor-pointer ${textCopied ? 'text-green-500' : ''}`}
-              onClick={(e) => {
-                const textField = document.createElement('textarea');
-                textField.innerText = awardee.address;
-                document.body.appendChild(textField);
-                textField.select();
-                document.execCommand('copy');
-                setTextCopied(true);
-                textField.remove();
-                ;
-              }}
-            />
-          </h1>
-              </>) : <h1>Not selected</h1>}
-             
-            </Block> */}
+                {shortenAddress(awardee.address)}{" "}
+                <FaCopy
+                  className={`cursor-pointer ${textCopied ? "text-green-500" : ""}`}
+                  onClick={(e) => {
+                    const textField = document.createElement("textarea");
+                    textField.innerText = awardee.address;
+                    document.body.appendChild(textField);
+                    textField.select();
+                    document.execCommand("copy");
+                    setTextCopied(true);
+                    textField.remove();
+                  }}
+                />
+              </h1>
+            </>
+          ) : (
+            <h1>Not selected</h1>
+          )}
+        </Block>
 
-            <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+        <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
 
         {admin == address && (
           <>
@@ -473,9 +462,18 @@ const [textCopied, setTextCopied] = useState(false);
                       <TableCell className="text-right">
                         {member.name}
                       </TableCell>
-                      <TableCell className="text-right">{member.employeeAddress}</TableCell>
                       <TableCell className="text-right">
-                        <Button onClick={(e)=> {e.preventDefault(), AwardEmployee(member.employeeAddress)}}>Award</Button>{" "}
+                        {member.employeeAddress}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          onClick={(e) => {
+                            e.preventDefault(),
+                              AwardEmployee(member.employeeAddress);
+                          }}
+                        >
+                          Award
+                        </Button>{" "}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -483,8 +481,6 @@ const [textCopied, setTextCopied] = useState(false);
               </Table>
             </Card>
             <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-
-          
 
             <BlockTitle>Finance</BlockTitle>
 
@@ -607,11 +603,7 @@ const [textCopied, setTextCopied] = useState(false);
           </div>
         </Block>
       </div>
-      <Notify
-        open={true}
-        title="Success"
-        message="Transaction Successful!"
-      />
+      <Notify open={true} title="Success" message="Transaction Successful!" />
     </Layout>
   );
 };

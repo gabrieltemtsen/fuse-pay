@@ -31,12 +31,11 @@ import axios from "axios";
 import { useRouter } from "next/router";
 
 export default function Index() {
-  const { address } = useAccount(); 
+  const { address } = useAccount();
   const router = useRouter();
 
   const [userCompanies, setUserCompanies] = useState([]);
   const [delayComplete, setDelayComplete] = useState(false);
-
 
   const [adminCompanies, setAdminCompanies] = useState([]);
 
@@ -162,7 +161,6 @@ export default function Index() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDelayComplete(true);
-
     }, 4500); // 4.5 seconds delay
 
     return () => clearTimeout(timer);
@@ -197,12 +195,12 @@ export default function Index() {
                 title={company.companyData.companyName}
               />
             ))
+          ) : delayComplete ? (
+            <ListItem title="No Companies yet" />
           ) : (
-            delayComplete ?  <ListItem title="No Companies yet" /> : 
             <Block strong insetMaterial outlineIos className="text-center">
-            <Preloader />
-          </Block>
-            
+              <Preloader />
+            </Block>
           )}
         </List>
 
@@ -227,12 +225,12 @@ export default function Index() {
                 title={company.companyData.companyName}
               />
             ))
+          ) : delayComplete ? (
+            <ListItem title="No Companies yet" />
           ) : (
-            delayComplete ?  <ListItem title="No Companies yet" /> : 
             <Block strong insetMaterial outlineIos className="text-center">
-            <Preloader />
-          </Block>
-            
+              <Preloader />
+            </Block>
           )}
           <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
         </List>

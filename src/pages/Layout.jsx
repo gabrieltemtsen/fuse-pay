@@ -36,24 +36,21 @@ const Layout = ({ children }) => {
 
   return (
     <Page>
-     
-
       <div className="normalHeight">
-      <div className=" flex items-center pr-2">
-        {!hideConnectBtn && (
-          <div className="w-full  conn mt-1 p-1">
-            <ConnectButton
-              showBalance={{
-                smallScreen: true,
-                largeScreen: false,
-              }}
-            />
-          </div>
-        )}
-      </div>
-        {children}
+        <div className=" flex items-center pr-2">
+          {!hideConnectBtn && (
+            <div className="w-full  conn mt-1 p-1">
+              <ConnectButton
+                showBalance={{
+                  smallScreen: true,
+                  largeScreen: false,
+                }}
+              />
+            </div>
+          )}
         </div>
- 
+        {children}
+      </div>
 
       <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
         <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">

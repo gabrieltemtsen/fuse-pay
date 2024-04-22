@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Notification,
-} from 'konsta/react';
+import React, { useState, useEffect } from "react";
+import { Notification } from "konsta/react";
 
 const Notify = ({ isOpen, onClose, title, subtitle, text }) => {
   const [notificationFull, setNotificationFull] = useState(false);
@@ -25,6 +23,6 @@ const Notify = ({ isOpen, onClose, title, subtitle, text }) => {
       text={text}
     />
   );
-}
+};
 
 export default Notify;

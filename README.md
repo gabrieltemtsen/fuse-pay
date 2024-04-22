@@ -46,13 +46,6 @@ To get started with Fuse Pay, follow these simple steps:
 
 6. **Loan Management**: Employees can apply for a loan from your company and repay it through their salary payments.
 
-
-
 ## Support
 
-If you need any assistance or have any questions, feel free to contact us at support@fusepay.com.
-
-## License
-
-Fuse Pay is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
+If you need any assistance or have any questions, feel free to contact us (bio).

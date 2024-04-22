@@ -40,17 +40,15 @@ import {
 const Index = () => {
   const { address } = useAccount();
   const [inTxn, setInTxn] = useState(false);
-  const [loanAmount, setLoanAmount] = useState('');
-  const [companyAddress, setCompanyAddress] = useState(''); 
-  const [reason, setReason] = useState(''); 
+  const [loanAmount, setLoanAmount] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
+  const [reason, setReason] = useState("");
   const [userCompanies, setUserCompanies] = useState([]);
   const [allAdmins, setAllAdmins] = useState([]);
   const [adminCompanies, setAdminCompanies] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [loanRequests, setLoanRequests] = useState([]);
-
- 
 
   const requestLoan = async () => {
     try {
@@ -59,20 +57,20 @@ const Index = () => {
         console.log("Please enter all fields");
         return;
       }
-  
+
       setInTxn(true);
-  
+
       // Convert loanAmount to Wei
       const amountInWei = ethers.utils.parseEther(loanAmount.toString());
       const amount = amountInWei.toString();
-  
+
       const { hash } = await writeContract({
         address: companyAddress,
         abi: FUSE_PAY_ABI,
         functionName: "requestLoan",
         args: [amount, reason],
       });
-      
+
       const receipt = await waitForTransaction({ hash });
       if (!receipt) {
         console.log("Failed to request loan");
@@ -101,10 +99,6 @@ const Index = () => {
     }
   };
 
-
-
-
-
   const getUserCompanies = async () => {
     try {
       const employeeCompanies = await readContract({
@@ -119,7 +113,6 @@ const Index = () => {
         functionName: "getAdminCompanies",
         args: [address],
       });
-
 
       // const getAllCompanies = await readContract({
       //   address: FUSE_PAY_MANAGER_ADDRESS,
@@ -198,10 +191,9 @@ const Index = () => {
         }
       }
       setUserCompanies(companyInfo);
-      setAllAdmins(allAdmin)
+      setAllAdmins(allAdmin);
       setAdminCompanies(adminCompanyInfo);
-      console.log(allAdmin)
-
+      console.log(allAdmin);
     } catch (error) {
       console.log(error);
     }
@@ -219,8 +211,7 @@ const Index = () => {
 
   useEffect(() => {
     getUserCompanies();
-    getAdmins()
-    
+    getAdmins();
   }, [address]);
   return (
     <Layout>
@@ -231,14 +222,12 @@ const Index = () => {
 
         <Block>
           <div class="max-w-sm mx-auto">
-
-
-          <div class="mb-5">
+            <div class="mb-5">
               <label
                 for="name"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-               Your Company
+                Your Company
               </label>
               <select
                 onChange={(e) => setCompanyAddress(e.target.value)}
@@ -248,18 +237,20 @@ const Index = () => {
                 placeholder="100"
                 required
               >
-                <option value="" disabled >Select Company</option>
-                { userCompanies.length > 0 ? userCompanies.map((company, index) => (
-
-                  <option key={++index} value={company.companyAddress}>{company.companyData.companyName}</option>
-                
-                )): <option value="">No Company</option>}
-              
-
-
-                </select>
+                <option value="" disabled>
+                  Select Company
+                </option>
+                {userCompanies.length > 0 ? (
+                  userCompanies.map((company, index) => (
+                    <option key={++index} value={company.companyAddress}>
+                      {company.companyData.companyName}
+                    </option>
+                  ))
+                ) : (
+                  <option value="">No Company</option>
+                )}
+              </select>
             </div>
-
 
             <div class="mb-5">
               <label
@@ -285,7 +276,7 @@ const Index = () => {
                 Reason
               </label>
               <input
-              onChange={(e) => setReason(e.target.value)}
+                onChange={(e) => setReason(e.target.value)}
                 type="text"
                 id="text"
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -294,73 +285,73 @@ const Index = () => {
               />
             </div>
 
-           {inTxn ? <Preloader className="center-item mt-3" /> :  <button
-              onClick={requestLoan}
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            >
-              Apply for Loan
-            </button>}
+            {inTxn ? (
+              <Preloader className="center-item mt-3" />
+            ) : (
+              <button
+                onClick={requestLoan}
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Apply for Loan
+              </button>
+            )}
           </div>
         </Block>
 
         {adminCompanies.length > 0 && (
-  <>
-    <BlockTitle>Loan Requests</BlockTitle>
-    <Block>
-      <div class="mb-5">
-        <label
-          for="name"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-          Select Company to get Requests
-        </label>
-        <select
-          onChange={(e) => getAllLoanRequests(e.target.value)}
-          type="text"
-          id="text"
-          class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-          placeholder="100"
-          required
-        >
-          <option value="">Select Company</option>
-          {adminCompanies.map((company, index) => (
-            <option key={index} value={company.companyAddress}>
-              {company.companyData.companyName}
-            </option>
-          ))}
-        </select>
-      </div>
-    </Block>
+          <>
+            <BlockTitle>Loan Requests</BlockTitle>
+            <Block>
+              <div class="mb-5">
+                <label
+                  for="name"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Select Company to get Requests
+                </label>
+                <select
+                  onChange={(e) => getAllLoanRequests(e.target.value)}
+                  type="text"
+                  id="text"
+                  class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                  placeholder="100"
+                  required
+                >
+                  <option value="">Select Company</option>
+                  {adminCompanies.map((company, index) => (
+                    <option key={index} value={company.companyAddress}>
+                      {company.companyData.companyName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </Block>
 
-    <Card className="block overflow-x-auto mt-8" contentWrap={false}>
-      <Table>
-        <TableHead>
-          <TableRow header>
-            <TableCell header>SN</TableCell>
-            <TableCell header className="text-right">
-              Employee Name
-            </TableCell>
-            <TableCell header className="text-right">
-              Address/Phone
-            </TableCell>
-            <TableCell header className="text-right">
-              Loan Amount
-            </TableCell>
-            <TableCell header className="text-right">
-              Loan Status
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {/* Render loan requests here */}
-        </TableBody>
-      </Table>
-    </Card>
-  </>
-)}
+            <Card className="block overflow-x-auto mt-8" contentWrap={false}>
+              <Table>
+                <TableHead>
+                  <TableRow header>
+                    <TableCell header>SN</TableCell>
+                    <TableCell header className="text-right">
+                      Employee Name
+                    </TableCell>
+                    <TableCell header className="text-right">
+                      Address/Phone
+                    </TableCell>
+                    <TableCell header className="text-right">
+                      Loan Amount
+                    </TableCell>
+                    <TableCell header className="text-right">
+                      Loan Status
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{/* Render loan requests here */}</TableBody>
+              </Table>
+            </Card>
+          </>
+        )}
 
-
-        
         <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
       </div>
     </Layout>

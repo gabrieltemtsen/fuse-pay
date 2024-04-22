@@ -33,7 +33,6 @@ const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 
-
 function MyApp({ Component, pageProps }) {
   const [deviceType, setDeviceType] = useState(null);
 
@@ -45,22 +44,20 @@ function MyApp({ Component, pageProps }) {
     const isLaptop = !isAndroid && !isIOS;
 
     if (isAndroid) {
-      setDeviceType('android');
+      setDeviceType("android");
     } else if (isIOS) {
-      setDeviceType('ios');
+      setDeviceType("ios");
     } else {
-      setDeviceType('laptop');
+      setDeviceType("laptop");
     }
   }, []);
-  const theme = deviceType === 'ios' ? 'ios' : 'material';
+  const theme = deviceType === "ios" ? "ios" : "material";
 
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
         <App dark={true} safeAreas={true} theme={theme}>
-
           <Component {...pageProps} />
-
         </App>
       </RainbowKitProvider>
     </WagmiConfig>

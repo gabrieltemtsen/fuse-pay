@@ -28,13 +28,12 @@ import {
 import { writeContract } from "@wagmi/core";
 import { useAccount, useBalance } from "wagmi";
 
-
 export default function Home() {
-  const {address} = useAccount();
+  const { address } = useAccount();
   const { data } = useBalance({
-    address
-  })
- 
+    address,
+  });
+
   const [notificationWithButton, setNotificationWithButton] = useState(false);
   const [sheetOpened, setSheetOpened] = useState(false);
   const [companyName, setCompanyName] = useState("");
@@ -46,9 +45,6 @@ export default function Home() {
   const [showToast, setShowToast] = useState(false);
   const [alertOpened, setAlertOpened] = useState(false);
 
- 
-
-
   const openNotification = (setter) => {
     setNotificationWithButton(false);
     setter(true);
@@ -58,14 +54,13 @@ export default function Home() {
     const file = e.target.files;
     const allowedTypes = ["image/jpeg", "image/png"];
     const maxSize = 2 * 1024 * 1024; // 3MB in bytes
-  
+
     if (file) {
-    
       if (file.size > maxSize) {
         alert("File size exceeds the maximum allowed (3MB).");
         return;
       }
-  
+
       setCompanyLogo(file);
       setShowToast(true);
     }
@@ -83,7 +78,7 @@ export default function Home() {
           companyDescription: description,
         };
         console.log("IMAGE INSERTED");
- // 0x763b9295081c8e04F444F44A1cF14D7379F579c2
+        // 0x763b9295081c8e04F444F44A1cF14D7379F579c2
         const companyCID = await putJSONandGetHash(obj, companyName);
         console.log("COMPANY INSERTED", companyCID);
         console.log(FUSE_PAY_MANAGER_ADDRESS);
@@ -107,11 +102,10 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
-      alert(error)
+      alert(error);
       setInTxn(false);
     }
   };
-
 
   return (
     <>
@@ -367,7 +361,7 @@ export default function Home() {
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
               <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                  Create a company workspace 
+                  Create a company workspace
                 </h3>
                 <button
                   onClick={(e) => {
@@ -396,70 +390,70 @@ export default function Home() {
                 </button>
               </div>
               <div class="p-4 md:p-5">
-               
-                  <div>
-                    <label
-                      for="email"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Company Name
-                    </label>
-                    <input
-                      onChange={(e) => {
-                        setCompanyName(e.target.value);
-                      }}
-                      type="text"
-                      name="text"
-                      id="text"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      placeholder="Fuse Pay"
-                      required
-                    />
-                  </div>
+                <div>
+                  <label
+                    for="email"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Company Name
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      setCompanyName(e.target.value);
+                    }}
+                    type="text"
+                    name="text"
+                    id="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    placeholder="Fuse Pay"
+                    required
+                  />
+                </div>
 
-                  <div>
-                    <label
-                      for="email"
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Description
-                    </label>
-                    <input
-                      onChange={(e) => {
-                        setDescription(e.target.value);
-                      }}
-                      type="text"
-                      name="text"
-                      id="text"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      placeholder="About Fuse Pay"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label
-                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      for="default_size"
-                    >
-                      Company Logo
-                    </label>
-                    <input
-                      onChange={handleUploadImage}
-                      class="block w-full mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                      id="default_size"
-                      type="file"
-                    />
-                  </div>
+                <div>
+                  <label
+                    for="email"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Description
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                    }}
+                    type="text"
+                    name="text"
+                    id="text"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                    placeholder="About Fuse Pay"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    for="default_size"
+                  >
+                    Company Logo
+                  </label>
+                  <input
+                    onChange={handleUploadImage}
+                    class="block w-full mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    id="default_size"
+                    type="file"
+                  />
+                </div>
 
-                  {!inTxn ?  <Button
+                {!inTxn ? (
+                  <Button
                     onClick={createCompany}
                     class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
-                   Create
-                  </Button> : <Preloader className="center-item " />}
-
-                 
-               
+                    Create
+                  </Button>
+                ) : (
+                  <Preloader className="center-item " />
+                )}
               </div>
             </div>
           </div>
