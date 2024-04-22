@@ -2,6 +2,8 @@
 
 Fuse Pay is a decentralized payroll platform that enables businesses to seamlessly make monthly payments to their employees. With Fuse Pay, companies can manage their payroll more efficiently, while employees enjoy the convenience of accessing their salaries through a user-friendly interface.
 
+
+
 ## Features
 
 - **Easy Registration**: Companies can easily register on Fuse Pay and set up their payroll system within minutes.
@@ -15,6 +17,10 @@ Fuse Pay is a decentralized payroll platform that enables businesses to seamless
 - **Staking for Interests**: Fuse Pay allows employees to stake their funds to earn interests, providing them with additional income opportunities.
 
 - **Loan Management**: Employees can apply for a loan from their company and repay it through their salary payments.
+
+## Deployed Celo Contract Address
+-[0xa4e48bdacfD9DC0a46B4AC3e72a149e027994f7e](https://celoscan.io/address/0xa4e48bdacfD9DC0a46B4AC3e72a149e027994f7e#code)
+
 
 ## How It Works
 
