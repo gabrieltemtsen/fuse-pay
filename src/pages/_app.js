@@ -1,5 +1,5 @@
 import { App } from "konsta/react";
-import "@/styles/globals.css";
+import "../styles/globals.css";
 import { useEffect, useState } from "react";
 
 import "@rainbow-me/rainbowkit/styles.css";
